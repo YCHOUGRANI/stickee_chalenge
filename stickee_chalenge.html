@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Stikee Chalenge</title>
+  </head>
+  <body>
+<div class="container mt-3">
+  <form>
+<div class="alert alert-danger d-none" role="alert" id='alert'>
+  Number expected! Please enter a valid number of widgets
+</div>
+  <div class="form-group">
+    <label for="widgets">Please enter number of widgets</label>
+    <input type="text" class="form-control" id="widgets" required>
+   <button type="button" id='process' class="btn btn-primary mt-1">Process package number </button>
+<button type="button" class="btn btn-info mt-1" id="reset">Reset</button>
+  <div class="font-weight-bold" id='result'></div>
+  </div>
+</div>
+
+</form>
+</div>
+ <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
+
+<script type="text/javascript"> 
+
+jQuery(document).ready(function(){ 
+
+var la_packlist=[250,500,1000,2000,5000];
+
+/////////////////////////////////////////////
+//sort packlist
+////////////////////////////////////////////
+   la_packlist=la_packlist.sort(function(a, b){return a-b});
+  var  ls_result ='';//display the end result of the process
+/////////////////////////////////////////////
+// recursive function get_package
+// input ln_widgets_nbr:  the number of the widget to spread 
+// input total=0  track the call recursion of the function
+////////////////////////////////////////////
+function get_package(ln_widgets_nbr,total=0){
+
+var la_temp_div=[];// array stores the division widgets_nbr/ different value of the pack type 
+var la_temp_rest=[];// array stores the rest of the division widgets_nbr/ different value of the pack type 
+
+var la_multiple=la_packlist.map(function(x){
+               la_temp_div.push(parseInt(ln_widgets_nbr/x));
+                la_temp_rest.push(ln_widgets_nbr%x);
+return x;
+})
+
+
+
+var best_sol=0;
+//*************************************
+var min1 = Math.min.apply(Math,la_temp_div);
+var min = la_temp_div.indexOf(min1);
+
+
+if (la_temp_div[min] === 0 ) {
+         --min;
+}
+if (min === -1) {
+        ls_result +='<br>1 pack type '+la_packlist[0] +' widgets';
+        return la_packlist[0];
+ }
+
+
+var li_min=0;
+if (la_temp_rest[min] && min < la_packlist.length-1) {
+ li_min=min+1;
+ls_result +='<br>'+(total === 0 ? '':' and one pack of ')+la_packlist[li_min]+' widgets';
+best_sol =best_sol+la_packlist[li_min];
+} else {
+ li_min=min;
+var l3_temp=la_temp_div[min]*la_packlist[min];
+ls_result +='<br> '+la_temp_div[min]+' packs of  '+la_packlist[min]+' widgets ='+l3_temp+' widgets';
+best_sol =best_sol+la_temp_div[min]*la_packlist[li_min];
+}
+if (ln_widgets_nbr <= best_sol)  { return;}
+
+return get_package(la_temp_rest[min],la_packlist[li_min]);
+
+}
+/////////////////////////////////////////////
+function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
+////////////////////////////////////////////
+
+$("#reset").click(function(){
+                      $('#widgets').val('');
+})
+
+$("#process").click(function(){
+ls_result='';
+
+var ls_input=$('#widgets').val();
+ if (typeof ls_input === 'undefined' || !isNumber(ls_input)) {
+     $("#alert").removeClass("d-none");
+     } else  {
+$("#alert").addClass("d-none");
+            get_package(parseInt(ls_input));
+            $('#result').html(ls_result);
+   }
+});
+
+});
+</script>
