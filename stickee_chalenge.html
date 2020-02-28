@@ -105,7 +105,7 @@ $("#process").click(function(){
 ls_result='';
 
 var ls_input=$('#widgets').val();
- if (typeof ls_input === 'undefined' || !isNumber(ls_input)) {
+ if (typeof ls_input === 'undefined' || !isNumber(ls_input) || ls_input <= 0) {
      $("#alert").removeClass("d-none");
      } else  {
 $("#alert").addClass("d-none");
